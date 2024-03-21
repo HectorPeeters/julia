@@ -970,6 +970,8 @@ register_condpass!(pm::PassManager, name::String, func::Function) = push!(pm.pas
 function default_opt_pipeline()::PassManager
     pm = PassManager()
 
+    # TODO: this takes a different type for the `ir` parameter 
+    register_pass!(pm, "to ircode", (ir, ci, sv) -> (convert_to_ircode(ci, sv), true))
     register_pass!(pm, "slot2reg", (ir, ci, sv) -> (slot2reg(ir, ci, sv), true))
     register_pass!(pm, "compact 1", (ir, ci, sv) -> (compact!(ir), true))
     register_pass!(pm, "Inlining", (ir, ci, sv) -> (ssa_inlining_pass!(ir, sv.inlining, ci.propagate_inbounds), true))
@@ -994,7 +996,7 @@ matchpass(optimize_until::Int, stage, _) = optimize_until == stage
 matchpass(optimize_until::String, _, name) = optimize_until == name
 matchpass(::Nothing, _, _) = false
 
-function run_passes(pm::PassManager, ir::IRCode, ci::CodeInfo, sv::OptimizationState, optimize_until = nothing)::IRCode
+function run_passes(pm::PassManager, ir, ci::CodeInfo, sv::OptimizationState, optimize_until = nothing)::IRCode
     made_changes = true
 
     for (stage, pass) in enumerate(pm.passes)
@@ -1021,8 +1023,7 @@ function run_passes_ipo_safe(
     
     pm = build_opt_pipeline(interp)
 
-    ir = convert_to_ircode(ci, sv)
-    return run_passes(pm, ir, ci, sv, optimize_until)
+    return run_passes(pm, nothing, ci, sv, optimize_until)
 end
 
 function convert_to_ircode(ci::CodeInfo, sv::OptimizationState)
