@@ -33,6 +33,6 @@ macro newinterp(InterpName)
         $CC.get_inference_world(interp::$InterpName) = interp.world
         $CC.get_inference_cache(interp::$InterpName) = interp.inf_cache
         $CC.cache_owner(::$InterpName) = $InterpCacheName
-        $CC.build_opt_pipeline(::$InterpName) = $CC.default_opt_pipeline()
+        $CC.build_opt_pipeline(::$InterpName) = $CC.DEFAULT_OPT_PIPELINE
     end
 end

@@ -1510,3 +1510,5 @@ function renumber_cfg_stmts!(cfg::CFG, blockchangemap::Vector{Int})
         end
     end
 end
+
+const DEFAULT_OPT_PIPELINE = default_opt_pipeline()
